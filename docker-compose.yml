@@ -1,0 +1,25 @@
+version: '3.4'
+
+services: 
+  web:
+    image: nginx:1.14.2-alpine
+    restart: always
+    volumes:
+      - ./public_html:/public_html
+      - ./conf.d:/etc/nginx/conf.d/
+      - ./dhparam:/etc/nginx/dhparam
+      - ./certbot/conf/:/etc/nginx/ssl/
+      - ./certbot/data:/usr/share/nginx/html/letsencrypt
+    ports:
+      - 80:80
+      - 443:443
+  
+  certbot:
+     image: certbot/certbot:latest
+     #command: >
+     #        sh -c "certonly --webroot --webroot-path=/usr/share/nginx/html/letsencrypt --email rpi.iot.2020@gmail.com --agree-tos --no-eff-email -d sss.rpi-iot.tk && certonly --webroot --webroot-path=/usr/share/nginx/html/letsencrypt --email rpi.iot.2020@gmail.com --agree-tos --no-eff-email -d rpi-iot.duckdns.org"
+     command: certonly --webroot --webroot-path=/usr/share/nginx/html/letsencrypt --email rpi.iot.2020@gmail.com --agree-tos --no-eff-email -d rpi-iot.duckdns.org
+     volumes:
+       - ./certbot/conf/:/etc/letsencrypt
+       - ./certbot/logs/:/var/log/letsencrypt
+       - ./certbot/data:/usr/share/nginx/html/letsencrypt
